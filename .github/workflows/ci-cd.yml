@@ -3,14 +3,17 @@ name: CI/CD for STAFF_ADMIN
 
 on:
   push:
-    branches: [staging, production]
+    branches: [staging, production, khoadna/main/init_project]
     paths:
       - "src/**"
       - ".github/workflows/**"
+      - "VnvcStaffAdmin.Application.csproj"
   pull_request:
-    branches: [staging, production]
+    branches: [staging, production, khoadna/main/init_project]
     paths:
       - "src/**"
+      - ".github/workflows/**"
+      - "VnvcStaffAdmin.Application.csproj"
 
 env:
   DOCKERCOMPOSE_FILE: 'docker-compose.yml'
@@ -19,7 +22,7 @@ jobs:
   docker-build:
     name: Build and Push Docker Images
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         service:
@@ -30,18 +33,21 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Sử dụng phiên bản mới hoặc mặc định
 
       - name: Set timezone
         uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: "Asia/Ho_Chi_Minh"
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Configure build variables
         id: config
         run: |
           echo "SERVICE_NAME=${{ matrix.service }}" >> $GITHUB_ENV
-          echo "URL_NAME=eplusapp/${{ matrix.service }}" >> $GITHUB_ENV
+          echo "URL_NAME=$(echo "eplusapp/${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
           echo "VERSION_TAG=v$(date +'%Y%m%d%H%M%S')-${GITHUB_SHA::8}" >> $GITHUB_ENV
 
       - name: Log in to Harbor registry
@@ -51,8 +57,8 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      - name: Build / push ${{ matrix.service }}
+        uses: docker/build-push-action@v6 # Sử dụng phiên bản v5 mới nhất
         with:
           context: .
           file: src/${{ matrix.service }}/Dockerfile
@@ -71,7 +77,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set deployment environment
         id: deploy_env
@@ -89,17 +95,16 @@ jobs:
           host: ${{ secrets[format('{0}_HOST', env.env)] }}
           username: ${{ secrets[format('{0}_USER', env.env)] }}
           key: ${{ secrets[format('{0}_SSH_PRIVATE_KEY', env.env)] }}
-          port: ${{ secrets[format('{0}_SSH_PORT', env.env)] }}
+          port: ${{ secrets[format('{0}_SSH_PORT_1', env.env)] }}
+
+          command_timeout: "10m"
           script: |
-            # Update each service in docker-compose
             for service in VnvcStaffAdmin.WebApi VnvcStaffAdmin.Authen VnvcStaffAdmin.Gateway; do
-              url_name="eplusapp/${service}"
+              url_name=$(echo "eplusapp/${service}" | tr '[:upper:]' '[:lower:]')
               sed -i "s|image: ${{ secrets.REGISTRY_URL }}/${url_name}:.*|image: ${{ secrets.REGISTRY_URL }}/${url_name}:${{ env.VERSION_TAG }}|g" ${{ env.DOCKERCOMPOSE_FILE }}
             done
-            
-            # Deploy using docker compose
+
             docker compose -f ${{ env.DOCKERCOMPOSE_FILE }} pull
             docker compose -f ${{ env.DOCKERCOMPOSE_FILE }} up -d
-            
-            # Cleanup
+
             docker system prune -f --volumes
