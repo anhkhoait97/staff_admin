@@ -1,0 +1,16 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://gateway-service",
+    "RateLimitOptions": {
+      "ClientIdHeader": "X-ClientId",
+      "EnableRateLimiting": true,
+      "GeneralRules": [
+        {
+          "Endpoint": "*",
+          "Period": "1s",
+          "Limit": 5
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+@VnvcStaffAdmin.Authen_HostAddress = http://localhost:5120
+
+GET {{VnvcStaffAdmin.Authen_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

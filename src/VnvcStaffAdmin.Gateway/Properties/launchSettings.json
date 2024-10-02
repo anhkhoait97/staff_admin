@@ -1,0 +1,23 @@
+{
+  "profiles": {
+    "VnvcStaffAdmin.Ocelot": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50003;http://localhost:50004"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "environmentVariables": {
+        "ASPNETCORE_HTTPS_PORTS": "50003",
+        "ASPNETCORE_HTTP_PORTS": "50004"
+      },
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  }
+}

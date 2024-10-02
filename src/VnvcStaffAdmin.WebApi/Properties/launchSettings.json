@@ -1,0 +1,23 @@
+{
+  "profiles": {
+    "VnvcStaffAdmin.WebApi": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "MONGO_ADMINSTAFF_CONNECTION_STRING": "mongodb://localhost:27017",
+        "ADMIN_STAFF_MONGODB_DATABASE_NAME": "admin_staff",
+        "IDENTITY_MONGODB_DATABASE_NAME": "identity",
+        "REDIS_HOST": "127.0.0.1",
+        "REDIS_PORT": "6379",
+        "REDIS_PASSWORD": "mypass",
+        "ES_HOST": "localhost",
+        "ES_PORT": "9200",
+        "ECO_FIREBASE_GOOGLE_APPLICATION_CREDENTIALS": "Private/eplus-test.json",
+        "GOOGLE_APPLICATION_CREDENTIALS": "Private/eco-production-bfc49bcc85e4.json",
+        "IS_SERVER=https": "eco-identityserver-6wlflrtz5q-as.a.run.app"
+      },
+      "applicationUrl": "https://localhost:50000;http://localhost:50001"
+    }
+  }
+}

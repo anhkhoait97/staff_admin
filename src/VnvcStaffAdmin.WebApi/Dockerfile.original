@@ -1,0 +1,34 @@
+# Base image for running the app
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy project files for each layer and restore dependencies
+COPY ["src/VnvcStaffAdmin.WebApi/VnvcStaffAdmin.WebApi.csproj", "VnvcStaffAdmin.WebApi/"]
+COPY ["src/VnvcStaffAdmin.Application/VnvcStaffAdmin.Application.csproj", "VnvcStaffAdmin.Application/"]
+COPY ["src/VnvcStaffAdmin.Identity/VnvcStaffAdmin.Identity.csproj", "VnvcStaffAdmin.Identity/"]
+COPY ["src/VnvcStaffAdmin.Domain/VnvcStaffAdmin.Domain.csproj", "VnvcStaffAdmin.Domain/"]
+COPY ["src/VnvcStaffAdmin.Infrastructure/VnvcStaffAdmin.Infrastructure.csproj", "VnvcStaffAdmin.Infrastructure/"]
+
+# Restore dependencies for the WebApi project
+RUN dotnet restore "VnvcStaffAdmin.WebApi/VnvcStaffAdmin.WebApi.csproj"
+
+WORKDIR "/src/VnvcStaffAdmin.WebApi"
+COPY . .
+
+RUN dotnet build "VnvcStaffAdmin.WebApi.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "VnvcStaffAdmin.WebApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+
+COPY --from=publish /app/publish .
+
+ENTRYPOINT ["dotnet", "VnvcStaffAdmin.WebApi.dll"]

@@ -1,0 +1,33 @@
+{
+  "profiles": {
+    "VnvcStaffAdmin.Authen": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "MONGO_ADMINSTAFF_CONNECTION_STRING": "mongodb://localhost:27020",
+        "IDENTITY_MONGODB_DATABASE_NAME": "identity",
+        "REDIS_HOST": "127.0.0.1",
+        "REDIS_PORT": "6379",
+        "REDIS_PASSWORD": "mypass",
+        "ES_HOST": "localhost",
+        "ES_PORT": "9200",
+        "ECO_FIREBASE_GOOGLE_APPLICATION_CREDENTIALS": "Private/eplus-test.json",
+        "GOOGLE_APPLICATION_CREDENTIALS": "Private/eco-production-bfc49bcc85e4.json",
+        "IS_SERVER=https": "eco-identityserver-6wlflrtz5q-as.a.run.app"
+      },
+      "applicationUrl": "https://localhost:50005;http://localhost:50006"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "environmentVariables": {
+        "ASPNETCORE_HTTPS_PORTS": "50005",
+        "ASPNETCORE_HTTP_PORTS": "50006"
+      },
+      "publishAllPorts": true,
+      "useSSL": true
+    }
+  }
+}

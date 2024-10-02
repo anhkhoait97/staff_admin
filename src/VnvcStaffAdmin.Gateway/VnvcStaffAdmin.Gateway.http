@@ -1,0 +1,6 @@
+@VnvcStaffAdmin.Gateway_HostAddress = http://localhost:5229
+
+GET {{VnvcStaffAdmin.Gateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

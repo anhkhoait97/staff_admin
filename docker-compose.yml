@@ -1,0 +1,59 @@
+services:
+  gateway-service:
+    build:
+      context: .
+      dockerfile: src/VnvcStaffAdmin.Gateway/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "50003:80"
+    depends_on:
+      - database-mongodb
+    volumes:
+      - ./certs:/certs:ro
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: src/VnvcStaffAdmin.Authen/Dockerfile
+    ports:
+      - "50005:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MONGO_ADMINSTAFF_CONNECTION_STRING=mongodb://database-mongodb:27017
+      - IDENTITY_MONGODB_DATABASE_NAME=identity
+      - REDIS_HOST=127.0.0.1
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=mypass
+      - ES_HOST=localhost
+      - ES_PORT=9200
+
+  staff-admin-service:
+    build:
+      context: .
+      dockerfile: src/VnvcStaffAdmin.WebApi/Dockerfile
+    ports:
+      - "50000:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MONGO_ADMINSTAFF_CONNECTION_STRING=mongodb://database-mongodb:27017
+      - IDENTITY_MONGODB_DATABASE_NAME=identity
+      - ADMIN_STAFF_MONGODB_DATABASE_NAME=admin_staff
+      - REDIS_HOST=127.0.0.1
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=mypass
+      - ES_HOST=localhost
+      - ES_PORT=9200
+
+  database-mongodb:
+    image: mongo:latest
+    ports:
+      - "27020:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
