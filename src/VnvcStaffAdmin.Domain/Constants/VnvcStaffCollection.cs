@@ -1,7 +1,14 @@
 ﻿namespace VnvcStaffAdmin.Domain.Constants
 {
-    public static class VnvcCollection
+    public static class VnvcStaffCollection
     {
-        public const string Center = "center";
+        public const string Recruitment = "eco_recruitment";
+
+        public const string TermAndCondition = "eco_term_and_condition";
+
+        public const string AppAccount = "eco_app_account";
+
+        public const string WorkSheet = "eco_work_sheet";
+        public const string Banner = "eco_banner";
     }
 }

@@ -1,0 +1,20 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "auth-docker",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "vnvc-staff-auth-api-stag",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamHttpMethod": [ "POST", "GET" ],
+      "AuthenticationOptions": {
+        "AllowedScopes": []
+      }
+    }
+  ]
+}

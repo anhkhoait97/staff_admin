@@ -6,8 +6,8 @@
       "SwaggerKey": "auth-docker",
       "DownstreamHostAndPorts": [
         {
-          "Host": "auth-service",
-          "Port": 80
+          "Host": "vnvc-staff-auth-api-stag",
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/api/auth/{everything}",

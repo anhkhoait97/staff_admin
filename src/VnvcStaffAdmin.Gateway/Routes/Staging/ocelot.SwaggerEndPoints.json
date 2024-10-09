@@ -1,0 +1,26 @@
+{
+  "SwaggerEndpoints": [
+    {
+      "Key": "auth-docker",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "VnvcStaffAdmin.Authen",
+          "Version": "1.0",
+          "Url": "http://vnvc-staff-auth-api-stag:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "staff-docker",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "VnvcStaffAdmin.WebApi",
+          "Version": "1.0",
+          "Url": "http://vnvc-staff-staff-api-stag:8080/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}

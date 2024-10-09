@@ -1,20 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using VnvcStaffAdmin.Application.Services.Interfaces;
-using VnvcStaffAdmin.Domain.Dtos.Recruitments;
 using VnvcStaffAdmin.Domain.Dtos.TermAndConditions;
 
 namespace VnvcStaffAdmin.WebApi.Controllers
 {
-    [Authorize]
-    [ApiController]
-    [Route("api/admin/[controller]/[action]")]
-    public class TermAndConditionController : ControllerBase
+    public class TermAndConditionController : AuthControllerBase
     {
-        private readonly ILogger<RecruitmentController> _logger;
+        private readonly ILogger<TermAndConditionController> _logger;
         private readonly ITermAndConditionService _termAndConditionService;
+
         public TermAndConditionController(
-            ILogger<RecruitmentController> logger,
+            ILogger<TermAndConditionController> logger,
             ITermAndConditionService termAndConditionService)
         {
             _logger = logger;

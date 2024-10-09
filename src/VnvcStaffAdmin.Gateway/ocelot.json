@@ -16,14 +16,14 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 50005
+          "Port": 50006
         }
       ],
       "DownstreamHttpMethod": null,
       "DownstreamHttpVersion": null,
       "DownstreamHttpVersionPolicy": null,
       "DownstreamPathTemplate": "/api/auth/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "FileCacheOptions": {
         "TtlSeconds": null,
         "Region": null,
@@ -94,14 +94,14 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 50000
+          "Port": 50001
         }
       ],
       "DownstreamHttpMethod": null,
       "DownstreamHttpVersion": null,
       "DownstreamHttpVersionPolicy": null,
       "DownstreamPathTemplate": "/api/staff-admin/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "FileCacheOptions": {
         "TtlSeconds": null,
         "Region": null,

@@ -34,11 +34,11 @@ namespace VnvcStaffAdmin.Domain.Model
 
         public List<DeviceAppAccountInfo> Devices { get; set; } = new List<DeviceAppAccountInfo>();
 
+        public List<LogLoginAppAccount> LoginLog { get; set; } = new List<LogLoginAppAccount>();
+
         public string? Center { get; set; }
 
         public string? IdentityNumber { get; set; }
-
-        public DateTime? FirstLogin { get; set; }
     }
 
     public class DeviceAppAccountInfo
@@ -49,6 +49,11 @@ namespace VnvcStaffAdmin.Domain.Model
 
         public string? SignalRConnectionId { get; set; }
 
+        public DateTime At { get; set; }
+    }
+
+    public class LogLoginAppAccount
+    {
         public DateTime At { get; set; }
     }
 }

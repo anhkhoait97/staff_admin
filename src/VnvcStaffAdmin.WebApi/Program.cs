@@ -23,7 +23,19 @@ builder.Services.AddAppServices();
 builder.Services.AddCustomAuthorize();
 builder.Services.AddJWTAuthen(builder.Configuration);
 
+builder.Services.AddMinioService(builder.Configuration);
+
 builder.Services.AddControllers();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -57,6 +69,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+app.UseCors("AllowAll");
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

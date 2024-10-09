@@ -13,9 +13,12 @@
         "REDIS_PASSWORD": "mypass",
         "ES_HOST": "localhost",
         "ES_PORT": "9200",
-        "ECO_FIREBASE_GOOGLE_APPLICATION_CREDENTIALS": "Private/eplus-test.json",
-        "GOOGLE_APPLICATION_CREDENTIALS": "Private/eco-production-bfc49bcc85e4.json",
-        "IS_SERVER=https": "eco-identityserver-6wlflrtz5q-as.a.run.app"
+        "ES_PASSWORD": "mypass",
+        "S3_MINIO_ENDPOINT": "s3-api.e-plus.vn",
+        "S3_MINIO_ACCESSKEY": "wdWSr9GMIZyJOElEB6Te",
+        "S3_MINIO_SECRETKEY": "NxL3EnLaSBEchoCkffjynaOTx6TiA95VZ2RkHOqM",
+        "S3_MINIO_BUCKETNAME": "eco-staff-upload",
+        "S3_MINIO_REGION": "us-west-1"
       },
       "applicationUrl": "https://localhost:50000;http://localhost:50001"
     }

@@ -1,27 +1,25 @@
 services:
-  gateway-service:
+  vnvc-staff-gateway-api-stag:
     build:
       context: .
       dockerfile: src/VnvcStaffAdmin.Gateway/Dockerfile
     environment:
-      - ASPNETCORE_URLS=http://+:80
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Docker
     ports:
-      - "50003:80"
+      - "50003:8080"
     depends_on:
       - database-mongodb
-    volumes:
-      - ./certs:/certs:ro
 
-  auth-service:
+  vnvc-staff-auth-api-stag:
     build:
       context: .
       dockerfile: src/VnvcStaffAdmin.Authen/Dockerfile
     ports:
-      - "50005:80"
+      - "50005:8080"
     environment:
-      - ASPNETCORE_URLS=http://+:80
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Docker
       - MONGO_ADMINSTAFF_CONNECTION_STRING=mongodb://database-mongodb:27017
       - IDENTITY_MONGODB_DATABASE_NAME=identity
       - REDIS_HOST=127.0.0.1
@@ -29,16 +27,18 @@ services:
       - REDIS_PASSWORD=mypass
       - ES_HOST=localhost
       - ES_PORT=9200
+    depends_on:
+      - database-mongodb
 
-  staff-admin-service:
+  vnvc-staff-staff-api-stag:
     build:
       context: .
       dockerfile: src/VnvcStaffAdmin.WebApi/Dockerfile
     ports:
-      - "50000:80"
+      - "50000:8080"
     environment:
-      - ASPNETCORE_URLS=http://+:80
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Docker
       - MONGO_ADMINSTAFF_CONNECTION_STRING=mongodb://database-mongodb:27017
       - IDENTITY_MONGODB_DATABASE_NAME=identity
       - ADMIN_STAFF_MONGODB_DATABASE_NAME=admin_staff
@@ -47,6 +47,13 @@ services:
       - REDIS_PASSWORD=mypass
       - ES_HOST=localhost
       - ES_PORT=9200
+      - S3_MINIO_ENDPOINT=s3-api.e-plus.vn
+      - S3_MINIO_ACCESSKEY=wdWSr9GMIZyJOElEB6Te
+      - S3_MINIO_SECRETKEY=NxL3EnLaSBEchoCkffjynaOTx6TiA95VZ2RkHOqM
+      - S3_MINIO_BUCKETNAME=eco-staff-upload
+      - S3_MINIO_REGION=us-west-1
+    depends_on:
+      - database-mongodb
 
   database-mongodb:
     image: mongo:latest

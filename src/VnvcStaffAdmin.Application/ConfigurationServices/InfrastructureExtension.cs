@@ -22,7 +22,7 @@ namespace VnvcStaffAdmin.Application.ConfigurationServices
 
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            //services.AddScoped<IRecruitmentRepository, RecruitmentRepository>();
+
             return services;
         }
     }

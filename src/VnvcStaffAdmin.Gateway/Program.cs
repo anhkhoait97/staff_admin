@@ -10,11 +10,12 @@ using VnvcStaffAdmin.Identity.ConfigurationServices;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
-var routes = "Routes";
+
+var routesFolder = $"Routes/{builder.Environment.EnvironmentName}";
 
 builder.Configuration.AddOcelotWithSwaggerSupport(options =>
 {
-    options.Folder = routes;
+    options.Folder = routesFolder;
 });
 
 builder.Services.AddOcelot(builder.Configuration)
@@ -23,7 +24,7 @@ builder.Services.AddOcelot(builder.Configuration)
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
 builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
-    .AddOcelot(routes, builder.Environment)
+    .AddOcelot(routesFolder, builder.Environment)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment}.json", optional: true)
     .AddEnvironmentVariables();
@@ -34,10 +35,21 @@ builder.Services.AddCustomAuthorize();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Swagger for ocelot
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCors("CorsPolicy");
 
 if (app.Environment.IsDevelopment())
 {

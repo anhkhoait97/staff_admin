@@ -1,0 +1,16 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://vnvc-staff-gateway-api-stag",
+    "RateLimitOptions": {
+      "ClientIdHeader": "X-ClientId",
+      "EnableRateLimiting": true,
+      "GeneralRules": [
+        {
+          "Endpoint": "*",
+          "Period": "1s",
+          "Limit": 5
+        }
+      ]
+    }
+  }
+}

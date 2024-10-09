@@ -6,13 +6,11 @@ using VnvcStaffAdmin.Domain.Dtos.WorkSheets;
 
 namespace VnvcStaffAdmin.WebApi.Controllers
 {
-    [Authorize]
-    [ApiController]
-    [Route("api/admin/[controller]/[action]")]
-    public class WorkSheetController : ControllerBase
+    public class WorkSheetController : AuthControllerBase
     {
         private readonly ILogger<WorkSheetController> _logger;
         private readonly IWorkSheetService _workSheetService;
+
         public WorkSheetController(
             ILogger<WorkSheetController> logger,
             IWorkSheetService workSheetService)
@@ -86,7 +84,5 @@ namespace VnvcStaffAdmin.WebApi.Controllers
             }
             return BadRequest(ModelState);
         }
-
-        
     }
 }

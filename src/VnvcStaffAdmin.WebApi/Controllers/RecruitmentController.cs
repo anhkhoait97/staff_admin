@@ -1,14 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VnvcStaffAdmin.Application.Services.Interfaces;
 using VnvcStaffAdmin.Domain.Dtos.Recruitments;
 
 namespace VnvcStaffAdmin.WebApi.Controllers
 {
-    [Authorize]
-    [ApiController]
-    [Route("api/staff-admin/[controller]/[action]")]
-    public class RecruitmentController : ControllerBase
+    public class RecruitmentController : AuthControllerBase
     {
         private readonly ILogger<RecruitmentController> _logger;
         private readonly IRecruitmentService _jobPostService;

@@ -1,0 +1,20 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/staff-admin/{everything}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "staff-docker",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 50001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/staff-admin/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AllowedScopes": []
+      }
+    }
+  ]
+}
