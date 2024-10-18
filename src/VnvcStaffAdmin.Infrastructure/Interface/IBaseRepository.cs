@@ -6,6 +6,7 @@ namespace VnvcStaffAdmin.Infrastructure.Interface
     public interface IBaseRepository<TEntity> : IDisposable where TEntity : class
     {
         Task<TEntity> GetByIdAsync(string id);
+        Task<TEntity> GetByIdAsync(Guid id);
 
         Task<IEnumerable<TEntity>> GetAllAsync();
 

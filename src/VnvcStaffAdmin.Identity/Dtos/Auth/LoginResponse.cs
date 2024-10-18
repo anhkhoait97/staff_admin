@@ -7,5 +7,7 @@
         public string Email { get; set; } = string.Empty;
         public string UserId { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
+        public IList<string> RoleNames { get; set; } = [];
+        public IList<string> Roles { get; set; } = [];
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using VnvcStaffAdmin.Application.Services.Interfaces;
+using VnvcStaffAdmin.Domain.Dtos.New;
 using VnvcStaffAdmin.Domain.Dtos.Recruitments;
 using VnvcStaffAdmin.Domain.Model;
 using VnvcStaffAdmin.Infrastructure.Interface.Uow;
@@ -27,7 +28,27 @@ namespace VnvcStaffAdmin.Application.Services
             var entity = await _vnvcStaffUow.GetRepository<Recruitment>().GetByIdAsync(id);
             return ResponseModel<Recruitment>.Successed(entity);
         }
+        public async Task<DatasourceResult<Recruitment>> GetLists(QueryGetListRecruitmentDto query)
+        {
+            var result = new DatasourceResult<Recruitment>
+            {
+                From = query.From,
+                Size = query.Size
+            };
 
+            try
+            {
+                var news = await _vnvcStaffUow.GetRepository<Recruitment>().FindPagingAsync(x => true, query.From, query.Size, Builders<Recruitment>.Sort.Descending(f => f.CreatedAt));
+                result.Data = news.ToList();
+                result.Total = await _vnvcStaffUow.GetRepository<Recruitment>().CountAsync(x => true);
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+            }
+
+            return result;
+        }
         public async Task<ResponseModel> CreateAsync(CreateRecruitmentDto entity)
         {
             try

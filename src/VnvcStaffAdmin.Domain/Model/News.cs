@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using VnvcStaffAdmin.Domain.Attributes;
+using VnvcStaffAdmin.Domain.Constants;
 
 namespace VnvcStaffAdmin.Domain.Model
 {
-    public class News : BaseEntity
+    [BsonIgnoreExtraElements]
+    [BsonCollection(VnvcStaffCollection.News)]
+    public class News : BaseSoftDeleteEntity
     {
         public string? Title { get; set; }
 
-        public int Order { get; set; }
+        public int? Order { get; set; }
 
         public string? Avatar { get; set; }
 
@@ -21,9 +21,9 @@ namespace VnvcStaffAdmin.Domain.Model
 
         public string? Type { get; set; }
 
-        public bool IsHotNews { get; set; }
+        public bool? IsHotNews { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        public bool? IsActive { get; set; } = true;
 
         public List<string> NewsCategoryIds { get; set; } = new List<string>();
 
@@ -39,17 +39,17 @@ namespace VnvcStaffAdmin.Domain.Model
 
         public string? VideoLink { get; set; }
 
-        public List<DocNewsV2> Docs { get; set; } = new List<DocNewsV2>();
+        public List<DocNewsV2>? Docs { get; set; } = new List<DocNewsV2>();
 
-        public bool IsSendNoti { get; set; }
+        public bool? IsSendNoti { get; set; }
 
-        public List<string> UserSendNotis { get; set; } = new List<string>();
+        public List<string>? UserSendNotis { get; set; } = new List<string>();
 
-        public ViewAdviseDataDetail ViewAdviseData { get; set; }
+        public ViewAdviseDataDetail? ViewAdviseData { get; set; }
 
-        public List<RequestSupportNews> RequestSupports { get; set; } = new List<RequestSupportNews>();
+        public List<RequestSupportNews>? RequestSupports { get; set; } = new List<RequestSupportNews>();
 
-        public List<string> NewsRelateds { get; set; } = new List<string>();
+        public List<string>? NewsRelateds { get; set; } = new List<string>();
 
         public List<News>? DisplayNewsRelateds { get; set; }
     }
@@ -66,7 +66,7 @@ namespace VnvcStaffAdmin.Domain.Model
 
         public string? Type { get; set; }
 
-        public long Size { get; set; }
+        public long? Size { get; set; }
 
         public string? NameFile { get; set; }
     }
@@ -77,6 +77,7 @@ namespace VnvcStaffAdmin.Domain.Model
         public string? AccountId { get; set; }
         public string? Phone { get; set; }
         public string? DateSubmit { get; set; }
-        public DateTime CreatedAt { get; set; }
+        [BsonRepresentation(BsonType.DateTime)]
+        public DateTime? CreatedAt { get; set; }
     }
 }

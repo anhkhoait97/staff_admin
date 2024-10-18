@@ -7,6 +7,6 @@ namespace VnvcStaffAdmin.Domain.Dtos.Recruitments
     public class UpdateRecruitmentDto : Recruitment, IUpdateColumn
     {
         [Required]
-        public required List<string> Columns { get; set; }
+        public List<string>? Columns { get; set; }
     }
 }

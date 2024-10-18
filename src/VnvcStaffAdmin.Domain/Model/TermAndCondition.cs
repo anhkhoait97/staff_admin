@@ -6,7 +6,7 @@ namespace VnvcStaffAdmin.Domain.Model
 {
     [BsonIgnoreExtraElements]
     [BsonCollection(VnvcStaffCollection.TermAndCondition)]
-    public class TermAndCondition : BaseEntity
+    public class TermAndCondition : BaseSoftDeleteEntity
     {
         public string? Title { get; set; }
 

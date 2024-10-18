@@ -14,6 +14,7 @@ namespace VnvcStaffAdmin.Domain.Model
         public string? CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public string? UpdatedBy { get; set; }
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime? UpdatedAt { get; set; }
     }
 

@@ -2,6 +2,7 @@
 using VnvcStaffAdmin.Application.Helpers;
 using VnvcStaffAdmin.Application.Services.Interfaces;
 using VnvcStaffAdmin.Domain.Dtos.AppAccounts;
+using VnvcStaffAdmin.Domain.Model;
 
 namespace VnvcStaffAdmin.WebApi.Controllers
 {
@@ -19,6 +20,7 @@ namespace VnvcStaffAdmin.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType<ResponseModel<AppAccount>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetById([FromQuery] string id)
         {
             if (ModelState.IsValid)
@@ -30,6 +32,7 @@ namespace VnvcStaffAdmin.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType<DatasourceResult<AppAccount>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLists([FromQuery] QueryGetListAppAccountDto query)
         {
             if (ModelState.IsValid)
@@ -63,6 +66,7 @@ namespace VnvcStaffAdmin.WebApi.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType<ResponseModel<AppAccount>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> Update([FromBody] UpdateAppAccountDto data)
         {
             if (ModelState.IsValid)

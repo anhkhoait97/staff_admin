@@ -13,15 +13,17 @@ namespace VnvcStaffAdmin.Infrastructure.ConfigurationServices
         {
             services.AddScoped<IVnvcStaffContext, VnvcStaffContext>();
             services.AddScoped<IVnvcContext, VnvcContext>();
+            services.AddScoped<IVnvcUserContext, VnvcUserContext>();
             services.AddScoped<IVnvcUow, VnvcUow>();
             services.AddScoped<IVnvcStaffUow, VnvcStaffUow>();
+            services.AddScoped<IVnvcUserUow, VnvcUserUow>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             return services;
         }
 
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            //services.AddScoped<IRecruitmentRepository, RecruitmentRepository>();
+
             return services;
         }
     }

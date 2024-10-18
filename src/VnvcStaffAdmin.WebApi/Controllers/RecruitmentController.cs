@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using VnvcStaffAdmin.Application.Services;
 using VnvcStaffAdmin.Application.Services.Interfaces;
+using VnvcStaffAdmin.Domain.Dtos.New;
 using VnvcStaffAdmin.Domain.Dtos.Recruitments;
+using VnvcStaffAdmin.Domain.Model;
 
 namespace VnvcStaffAdmin.WebApi.Controllers
 {
@@ -35,6 +38,18 @@ namespace VnvcStaffAdmin.WebApi.Controllers
             {
                 var result = await _jobPostService.GetByIdAsync(id);
                 return Ok(result);
+            }
+            return BadRequest(ModelState);
+        }
+
+        [HttpGet]
+        [ProducesResponseType<DatasourceResult<Recruitment>>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetLists([FromQuery] QueryGetListRecruitmentDto query)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _jobPostService.GetLists(query);
+                return Ok(response);
             }
             return BadRequest(ModelState);
         }

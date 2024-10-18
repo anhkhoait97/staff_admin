@@ -28,9 +28,9 @@ namespace VnvcStaffAdmin.Application.Services
             {
                 var news = await _vnvcStaffUow.GetRepository<News>().SingleAsync(x => x.Id == id);
 
-                if (news.NewsRelateds.Any())
+                if (news.NewsRelateds!.Count != 0)
                 {
-                    var newsRelateds = await _vnvcStaffUow.GetRepository<News>().FindAsync(x => news.NewsRelateds.Contains(x.Id));
+                    var newsRelateds = await _vnvcStaffUow.GetRepository<News>().FindAsync(x => news.NewsRelateds.Contains(x.Id!));
 
                     news.DisplayNewsRelateds = newsRelateds.ToList();
                 }
@@ -44,9 +44,9 @@ namespace VnvcStaffAdmin.Application.Services
             }
         }
 
-        public async Task<DatasourceResult<AppAccount>> GetLists(QueryGetListNewsDto query)
+        public async Task<DatasourceResult<News>> GetLists(QueryGetListNewsDto query)
         {
-            var result = new DatasourceResult<AppAccount>
+            var result = new DatasourceResult<News>
             {
                 From = query.From,
                 Size = query.Size
@@ -54,9 +54,9 @@ namespace VnvcStaffAdmin.Application.Services
 
             try
             {
-                var news = await _vnvcStaffUow.GetRepository<AppAccount>().FindPagingAsync(x => true, query.From, query.Size, Builders<AppAccount>.Sort.Descending(f => f.CreatedAt));
+                var news = await _vnvcStaffUow.GetRepository<News>().FindPagingAsync(x => true, query.From, query.Size, Builders<News>.Sort.Descending(f => f.CreatedAt));
                 result.Data = news.ToList();
-                result.Total = await _vnvcStaffUow.GetRepository<AppAccount>().CountAsync(x => true);
+                result.Total = await _vnvcStaffUow.GetRepository<News>().CountAsync(x => true);
             }
             catch (Exception ex)
             {
@@ -70,21 +70,7 @@ namespace VnvcStaffAdmin.Application.Services
         {
             try
             {
-                var news = data.Cast<News>();
-
-                if (!string.IsNullOrEmpty(data.ViewAdvise))
-                {
-                    try
-                    {
-                        news.ViewAdviseData = JsonConvert.DeserializeObject<ViewAdviseDataDetail>(data.ViewAdvise);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-
-                await _vnvcStaffUow.GetRepository<News>().AddAsync(news);
+                await _vnvcStaffUow.GetRepository<News>().AddAsync(data);
 
                 return ResponseModel.Successed("Thành công", data);
             }
@@ -127,6 +113,7 @@ namespace VnvcStaffAdmin.Application.Services
                         "IsSendNoti" => updateBuilder.Set(s => s.IsSendNoti, dto.IsSendNoti),
                         "UserSendNotis" => updateBuilder.Set(s => s.UserSendNotis, dto.UserSendNotis),
                         "NewsRelateds" => updateBuilder.Set(s => s.NewsRelateds, dto.NewsRelateds),
+                        "IsDelete" => updateBuilder.Set(s => s.IsDelete, dto.IsDelete),
                         _ => null
                     }).Where(update => update != null));
 

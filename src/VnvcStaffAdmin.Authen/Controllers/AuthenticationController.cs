@@ -42,6 +42,7 @@ namespace VnvcStaffAdmin.Authen.Controllers
 
         [HttpPost]
         [Route("roles/add")]
+        [ProducesResponseType<ResponseModel<IdentityResult>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleRequest request)
         {
             var appRole = new ApplicationRole { Name = request.Role };
@@ -52,6 +53,7 @@ namespace VnvcStaffAdmin.Authen.Controllers
 
         [HttpPost]
         [Route("register-admin")]
+        [ProducesResponseType<ResponseModel>(StatusCodes.Status200OK)]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterRequest request)
         {
             try
@@ -67,7 +69,7 @@ namespace VnvcStaffAdmin.Authen.Controllers
 
                 var result = await RegisterAsync(request, RoleConst.ADMIN);
 
-                return result.Success ? Ok(ResponseModel.Successed()) : BadRequest(ResponseModel.Failed(result.Message));
+                return result.Success ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
             {
@@ -77,6 +79,7 @@ namespace VnvcStaffAdmin.Authen.Controllers
 
         [HttpPost]
         [Route("register-user")]
+        [ProducesResponseType<ResponseModel>(StatusCodes.Status200OK)]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterRequest request)
         {
             try
@@ -92,7 +95,7 @@ namespace VnvcStaffAdmin.Authen.Controllers
 
                 var result = await RegisterAsync(request, RoleConst.USER);
 
-                return result.Success ? Ok(ResponseModel.Successed()) : BadRequest(ResponseModel.Failed(result.Message));
+                return result.Success ? Ok(result) : BadRequest(result);
             }
             catch (Exception ex)
             {
@@ -116,12 +119,17 @@ namespace VnvcStaffAdmin.Authen.Controllers
                     Email = request.Email,
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
                     UserName = request.Email,
+                    PhoneNumber = request.PhoneNumber,
+                    RoleNames = [role],
+                    CreatedAt = DateTime.UtcNow
                 };
+
                 var createUserResult = await _userManager.CreateAsync(userExists, request.Password);
                 if (!createUserResult.Succeeded)
                     return ResponseModel.Failed($"Create user failed {createUserResult?.Errors?.First()?.Description}");
 
                 var addUserToRoleResult = await _userManager.AddToRoleAsync(userExists, role);
+
                 if (!addUserToRoleResult.Succeeded)
                     return ResponseModel.Failed($"Create user succeeded but could not add user to role {addUserToRoleResult?.Errors?.First()?.Description}");
 
@@ -140,7 +148,7 @@ namespace VnvcStaffAdmin.Authen.Controllers
         {
             var result = await LoginAsync(request);
 
-            return result.Success ? Ok(result) : BadRequest(result.Message);
+            return result.Success ? Ok(result) : BadRequest(result);
         }
 
         private async Task<ResponseModel> LoginAsync(LoginRequest request)
@@ -149,10 +157,10 @@ namespace VnvcStaffAdmin.Authen.Controllers
             {
                 var user = await _userManager.FindByEmailAsync(request.Email);
                 if (user is null)
-                    return ResponseModel.Failed("Invalid email/password");
+                    return ResponseModel.Failed("Invalid email/password", null);
                 var isMatchPassword = await _userManager.CheckPasswordAsync(user, request.Password);
                 if (!isMatchPassword)
-                    return ResponseModel.Failed("Invalid email/password");
+                    return ResponseModel.Failed("Invalid email/password", null);
 
                 var claims = new List<Claim>
             {
@@ -167,7 +175,7 @@ namespace VnvcStaffAdmin.Authen.Controllers
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("a_very_long_secret_key_with_at_least_32_chars"));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var expires = DateTime.Now.AddHours(1);
+                var expires = DateTime.Now.AddDays(1);
 
                 var token = new JwtSecurityToken(
                     issuer: "https://your-identity-service-url",
@@ -178,13 +186,16 @@ namespace VnvcStaffAdmin.Authen.Controllers
 
                     );
 
+
                 return ResponseModel.Successed("Login Successful", new LoginResponse
                 {
                     AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                     Message = "Login Successful",
                     Email = user?.Email,
                     Success = true,
-                    UserId = user?.Id.ToString()
+                    UserId = user?.Id.ToString(),
+                    Roles = user.Roles,
+                    RoleNames = roles
                 });
             }
             catch (Exception e)

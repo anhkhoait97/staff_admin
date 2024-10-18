@@ -115,3 +115,6 @@ UpgradeLog*.XML
 /.local-chromium/Win64-884014/chrome-win
 /Temporary/kqxn_2021_09_15_04_09_23.html
 logs/
+
+#ocelot
+src/VnvcStaffAdmin.Gateway/ocelot.json

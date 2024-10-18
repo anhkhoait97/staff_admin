@@ -12,7 +12,7 @@ namespace VnvcStaffAdmin.Application.Services.Interfaces
     {
         Task<ResponseModel> GetById(string id);
 
-        Task<DatasourceResult<AppAccount>> GetLists(QueryGetListNewsDto query);
+        Task<DatasourceResult<News>> GetLists(QueryGetListNewsDto query);
 
         Task<ResponseModel> Create(CreatedNewsDto data);
 

@@ -10,9 +10,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using VnvcStaffAdmin.Identity.Models;
 using VnvcStaffAdmin.Identity.Policies;
+using VnvcStaffAdmin.Identity.Services;
 
 namespace VnvcStaffAdmin.Identity.ConfigurationServices
-{ 
+{
     public static class IdentityExtension
     {
         public static IServiceCollection AddMongoIdentity(this IServiceCollection services)
@@ -46,7 +47,7 @@ namespace VnvcStaffAdmin.Identity.ConfigurationServices
             services.AddSingleton<IAuthorizationHandler, HasClaimHandler>();
 
             services
-                .ConfigureMongoDbIdentity<ApplicationUser, ApplicationRole, Guid>(mongoDbIdentityConfig)
+                .ConfigureMongoDbIdentity<ApplicationUser, ApplicationRole, string>(mongoDbIdentityConfig)
                 .AddUserManager<UserManager<ApplicationUser>>()
                 .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddRoleManager<RoleManager<ApplicationRole>>()
@@ -88,6 +89,12 @@ namespace VnvcStaffAdmin.Identity.ConfigurationServices
                 };
             });
 
+            return services;
+        }
+
+        public static IServiceCollection AddIdentityAppService(this IServiceCollection services)
+        {
+            services.AddScoped<IApplicationUserService, ApplicationUserService>();
             return services;
         }
     }

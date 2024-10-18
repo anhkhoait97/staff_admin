@@ -6,10 +6,10 @@ namespace VnvcStaffAdmin.Domain.Model
 {
     [BsonIgnoreExtraElements]
     [BsonCollection(VnvcStaffCollection.WorkSheet)]
-    public class WorkSheet : BaseEntity
+    public class WorkSheet : BaseSoftDeleteEntity
     {
         public string? DayShift { get; set; }
-
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime? DayShiftDate { get; set; }
 
         public string? UserId { get; set; }
@@ -24,20 +24,20 @@ namespace VnvcStaffAdmin.Domain.Model
 
         public double? TotalWorkingHour { get; set; }
 
-        public List<InfoDetail> SSID { get; set; } = new List<InfoDetail>();
+        public List<InfoDetail>? SSID { get; set; } = [];
 
         public string? Address { get; set; }
 
-        public List<InfoDetail> GPS { get; set; } = new List<InfoDetail>();
+        public List<InfoDetail>? GPS { get; set; } = [];
 
-        public List<LogDetail> Logs { get; set; } = new List<LogDetail> { };
+        public List<LogDetail>? Logs { get; set; } = [];
     }
 
     public class InfoDetail
     {
         public string? Data { get; set; }
-
-        public DateTime CreatedAt { get; set; }
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime? CreatedAt { get; set; }
     }
 
     public class LogDetail
@@ -45,7 +45,7 @@ namespace VnvcStaffAdmin.Domain.Model
         public string? SSID { get; set; }
 
         public string? GPS { get; set; }
-
-        public DateTime CreatedAt { get; set; }
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime? CreatedAt { get; set; }
     }
 }

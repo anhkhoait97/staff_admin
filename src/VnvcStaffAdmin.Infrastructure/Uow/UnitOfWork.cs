@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using System.Reflection;
 using VnvcStaffAdmin.Domain.Attributes;
@@ -13,12 +14,14 @@ namespace VnvcStaffAdmin.Infrastructure.Uow
         private readonly IMongoContext _context;
         private readonly Dictionary<Type, object> _repositories;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public UnitOfWork(IMongoContext context, IServiceProvider serviceProvider)
+        public UnitOfWork(IMongoContext context, IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _repositories = [];
+            _contextAccessor = contextAccessor;
         }
 
         public IBaseRepository<TEntity> GetRepository<TEntity>() where TEntity : class
@@ -28,7 +31,7 @@ namespace VnvcStaffAdmin.Infrastructure.Uow
                 return (IBaseRepository<TEntity>)repository;
             }
 
-            var repositoryInstance = new BaseRepository<TEntity>(_context);
+            var repositoryInstance = new BaseRepository<TEntity>(_context, _contextAccessor);
  
             _repositories[typeof(TEntity)] = repositoryInstance;
 

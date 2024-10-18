@@ -5,8 +5,10 @@ on:
     branches: [staging]
     paths:
       - "src/**"
-      - ".github/workflows/**"
-      - "VnvcStaffAdmin.Application.csproj"
+  pull_request:
+    branches: [staging]
+    paths:
+      - "src/**"
 
 jobs:
   build-and-deploy:
@@ -36,6 +38,9 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           buildkitd-flags: --debug
+      
+      - name: Create Docker Network
+        run: docker network create vnvc-network || echo "Network vnvc-network already exists"
 
       - name: Login to Harbor registry
         uses: docker/login-action@v3
@@ -81,26 +86,26 @@ jobs:
             sed -i "5 s/${{ env.SERVICE_NAME }}.*/${{ env.SERVICE_NAME }}:${{ env.VERSION_TAG }}/g" "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml"
             docker compose -f "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml" up -d --force-recreate
 
-      - name: Deploy to server 2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USER }}
-          key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
-          port: ${{ secrets.STAGING_SSH_PORT_2 }}
-          script: |
-            echo 'Deploying ${{ env.SERVICE_NAME }}...'
-            sed -i "5 s/${{ env.SERVICE_NAME }}.*/${{ env.SERVICE_NAME }}:${{ env.VERSION_TAG }}/g" "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml"
-            docker compose -f "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml" up -d --force-recreate
+      # - name: Deploy to server 2
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.STAGING_HOST }}
+      #     username: ${{ secrets.STAGING_USER }}
+      #     key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+      #     port: ${{ secrets.STAGING_SSH_PORT_2 }}
+      #     script: |
+      #       echo 'Deploying ${{ env.SERVICE_NAME }}...'
+      #       sed -i "5 s/${{ env.SERVICE_NAME }}.*/${{ env.SERVICE_NAME }}:${{ env.VERSION_TAG }}/g" "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml"
+      #       docker compose -f "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml" up -d --force-recreate
 
-      - name: Deploy to server 3
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USER }}
-          key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
-          port: ${{ secrets.STAGING_SSH_PORT_3 }}
-          script: |
-            echo 'Deploying ${{ env.SERVICE_NAME }}...'
-            sed -i "5 s/${{ env.SERVICE_NAME }}.*/${{ env.SERVICE_NAME }}:${{ env.VERSION_TAG }}/g" "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml"
-            docker compose -f "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml" up -d --force-recreate
+      # - name: Deploy to server 3
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.STAGING_HOST }}
+      #     username: ${{ secrets.STAGING_USER }}
+      #     key: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+      #     port: ${{ secrets.STAGING_SSH_PORT_3 }}
+      #     script: |
+      #       echo 'Deploying ${{ env.SERVICE_NAME }}...'
+      #       sed -i "5 s/${{ env.SERVICE_NAME }}.*/${{ env.SERVICE_NAME }}:${{ env.VERSION_TAG }}/g" "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml"
+      #       docker compose -f "${{ vars.DOCKERCOMPOSE_DIR }}/${{ env.SERVICE_NAME }}/docker-compose.yml" up -d --force-recreate

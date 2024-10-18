@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VnvcStaffAdmin.Application.Services.Interfaces;
 using VnvcStaffAdmin.Domain.Dtos.Banners;
+using VnvcStaffAdmin.Domain.Model;
+using VnvcStaffAdmin.Identity.Models;
 
 namespace VnvcStaffAdmin.WebApi.Controllers
 {
@@ -18,6 +20,7 @@ namespace VnvcStaffAdmin.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType<ResponseModel<Banner>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetById([FromQuery] string id)
         {
             if (ModelState.IsValid)
@@ -29,6 +32,7 @@ namespace VnvcStaffAdmin.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType<DatasourceResult<Banner>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLists([FromQuery] QueryGetListBannerDto query)
         {
             if (ModelState.IsValid)
@@ -40,7 +44,7 @@ namespace VnvcStaffAdmin.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Created([FromBody] CreatedBannerDto data)
+        public async Task<IActionResult> Create([FromBody] CreatedBannerDto data)
         {
             if (ModelState.IsValid)
             {

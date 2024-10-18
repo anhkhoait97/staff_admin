@@ -1,4 +1,5 @@
-﻿using VnvcStaffAdmin.Domain.Interface;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using VnvcStaffAdmin.Domain.Interface;
 
 namespace VnvcStaffAdmin.Domain.Dtos.AppAccounts
 {
@@ -20,6 +21,7 @@ namespace VnvcStaffAdmin.Domain.Dtos.AppAccounts
 
         public string? AvatarUrl { get; set; }
 
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime? Birthday { get; set; }
 
         public string? Gender { get; set; }
@@ -29,6 +31,6 @@ namespace VnvcStaffAdmin.Domain.Dtos.AppAccounts
         public string? Center { get; set; }
 
         public string? IdentityNumber { get; set; }
-        public List<string> Columns { get; set; } = new List<string>();
+        public List<string>? Columns { get; set; } = [];
     }
 }

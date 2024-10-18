@@ -68,9 +68,7 @@ namespace VnvcStaffAdmin.Application.Services
         {
             try
             {
-                var banner = data.Cast<Banner>();
-
-                await _vnvcStaffUow.GetRepository<Banner>().AddAsync(banner);
+                await _vnvcStaffUow.GetRepository<Banner>().AddAsync(data);
 
                 return ResponseModel.Successed("Thành công", data);
             }
@@ -108,6 +106,7 @@ namespace VnvcStaffAdmin.Application.Services
                         "Ratio" => updateBuilder.Set(s => s.Ratio, dto.Ratio),
                         "VideoLink" => updateBuilder.Set(s => s.VideoLink, dto.VideoLink),
                         "Config" => updateBuilder.Set(s => s.Config, dto.Config),
+                        "IsDelete" => updateBuilder.Set(s => s.IsDelete, dto.IsDelete),
                         _ => null
                     }).Where(update => update != null));
 

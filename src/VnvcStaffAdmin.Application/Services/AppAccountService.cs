@@ -29,7 +29,7 @@ namespace VnvcStaffAdmin.Application.Services
         {
             try
             {
-                var result = await _vnvcStaffUow.GetRepository<AppAccount>().SingleAsync(x => x.Id == id);
+                var result = await _vnvcStaffUow.GetRepository<AppAccount>().GetByIdAsync(id);
 
                 return result != null ? ResponseModel.Successed("Thành công", result) : ResponseModel.Failed("Tài khoản không tồn tại");
             }
@@ -51,11 +51,6 @@ namespace VnvcStaffAdmin.Application.Services
             try
             {
                 Expression<Func<AppAccount, bool>> predicate = x => true;
-
-                if (!string.IsNullOrEmpty(query.SearchText))
-                {
-                    predicate = x => x.FullName.Contains(query.SearchText.Trim()) || x.Phone.Contains(query.SearchText.Trim()) || x.Email.Contains(query.SearchText.Trim());
-                }
 
                 var appAccounts = await _vnvcStaffUow.GetRepository<AppAccount>().FindPagingAsync(predicate, query.From, query.Size, Builders<AppAccount>.Sort.Descending(f => f.CreatedAt));
                 result.Data = appAccounts.ToList();
@@ -119,11 +114,6 @@ namespace VnvcStaffAdmin.Application.Services
         {
             Expression<Func<AppAccount, bool>> predicate = x => true;
 
-            if (!string.IsNullOrEmpty(query.SearchText))
-            {
-                predicate = x => x.FullName.Contains(query.SearchText.Trim()) || x.Phone.Contains(query.SearchText.Trim()) || x.Email.Contains(query.SearchText.Trim());
-            }
-
             var appAccounts = await _vnvcStaffUow.GetRepository<AppAccount>().FindAsync(predicate);
 
             string excelName = $"app_account_export__{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
@@ -186,7 +176,7 @@ namespace VnvcStaffAdmin.Application.Services
                 workSheet.Cells[row, i++].Value = StringHelper.FormatPhoneNumber(item.Phone);
                 workSheet.Cells[row, i++].Value = !string.IsNullOrEmpty(item.Email) ? item.Email : string.Empty;
                 workSheet.Cells[row, i++].Value = item.Province;
-                workSheet.Cells[row, i++].Value = item.LoginLog.OrderByDescending(x => x.At).FirstOrDefault()?.At.AddHours(7).ToString("dd/MM/yyyy HH:mm:ss");
+                workSheet.Cells[row, i++].Value = item.LoginLog.OrderByDescending(x => x.At).FirstOrDefault()?.At?.AddHours(7).ToString("dd/MM/yyyy HH:mm:ss");
                 workSheet.Cells[row, i++].Value = item.IsActive ? "Hoạt động" : "Ngưng hoạt động";
                 workSheet.Cells[row, i++].Value = gender;
                 workSheet.Cells[row, i++].Value = item.Birthday?.AddHours(7).ToString("dd/MM/yyyy");

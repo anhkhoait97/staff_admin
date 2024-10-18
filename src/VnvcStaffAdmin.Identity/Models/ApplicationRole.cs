@@ -1,10 +1,11 @@
 ﻿using AspNetCore.Identity.MongoDbCore.Models;
 using MongoDbGenericRepository.Attributes;
+using VnvcStaffAdmin.Domain.Constants;
 
 namespace VnvcStaffAdmin.Identity.Models
 {
-    [CollectionName("roles")]
-    public class ApplicationRole : MongoIdentityRole<Guid>
+    [CollectionName(VnvcStaffCollection.Role)]
+    public class ApplicationRole : MongoIdentityRole<string>
     {
     }
 }

@@ -12,6 +12,9 @@ namespace VnvcStaffAdmin.Identity.Dtos.Auth
         [Required]
         public string FullName { get; set; } = string.Empty;
 
+        [Required]
+        public string PhoneNumber { get; set; } = string.Empty;
+
         [Required, DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 

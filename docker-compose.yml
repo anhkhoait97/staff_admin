@@ -8,6 +8,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Docker
     ports:
       - "50003:8080"
+    networks:
+      - vnvc-staff
     depends_on:
       - database-mongodb
 
@@ -27,6 +29,8 @@ services:
       - REDIS_PASSWORD=mypass
       - ES_HOST=localhost
       - ES_PORT=9200
+    networks:
+      - vnvc-staff
     depends_on:
       - database-mongodb
 
@@ -47,11 +51,15 @@ services:
       - REDIS_PASSWORD=mypass
       - ES_HOST=localhost
       - ES_PORT=9200
-      - S3_MINIO_ENDPOINT=s3-api.e-plus.vn
-      - S3_MINIO_ACCESSKEY=wdWSr9GMIZyJOElEB6Te
-      - S3_MINIO_SECRETKEY=NxL3EnLaSBEchoCkffjynaOTx6TiA95VZ2RkHOqM
-      - S3_MINIO_BUCKETNAME=eco-staff-upload
-      - S3_MINIO_REGION=us-west-1
+      - ES_USER_NAME=example,
+      - ES_PASSWORD=example,
+      - S3_MINIO_ENDPOINT=example
+      - S3_MINIO_ACCESSKEY=example
+      - S3_MINIO_SECRETKEY=example
+      - S3_MINIO_BUCKETNAME=example
+      - S3_MINIO_REGION=example
+    networks:
+      - vnvc-staff
     depends_on:
       - database-mongodb
 
@@ -61,6 +69,12 @@ services:
       - "27020:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - vnvc-staff
 
 volumes:
   mongodb_data:
+
+networks:
+  vnvc-staff:
+    external: true

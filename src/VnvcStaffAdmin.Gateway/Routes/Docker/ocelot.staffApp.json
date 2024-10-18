@@ -1,0 +1,20 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/app/{everything}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "staff-app-docker",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "vnvc-staff-app-api-stag",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/app/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AllowedScopes": []
+      }
+    }
+  ]
+}

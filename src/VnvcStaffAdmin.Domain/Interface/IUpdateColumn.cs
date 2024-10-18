@@ -4,6 +4,6 @@ namespace VnvcStaffAdmin.Domain.Interface
 {
     public interface IUpdateColumn
     {
-        public List<string> Columns { get; set; }
+        public List<string>? Columns { get; set; }
     }
 }

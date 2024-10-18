@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using VnvcStaffAdmin.Application.Services.Interfaces;
 using VnvcStaffAdmin.Domain.Dtos.New;
+using VnvcStaffAdmin.Domain.Model;
 
 namespace VnvcStaffAdmin.WebApi.Controllers
 {
@@ -30,6 +31,7 @@ namespace VnvcStaffAdmin.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType<DatasourceResult<News>>(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLists([FromQuery] QueryGetListNewsDto query)
         {
             if (ModelState.IsValid)
@@ -41,7 +43,7 @@ namespace VnvcStaffAdmin.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Created([FromBody] CreatedNewsDto data)
+        public async Task<IActionResult> Create([FromBody] CreatedNewsDto data)
         {
             if (ModelState.IsValid)
             {

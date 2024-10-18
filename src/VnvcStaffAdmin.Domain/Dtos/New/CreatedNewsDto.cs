@@ -9,9 +9,9 @@ namespace VnvcStaffAdmin.Domain.Dtos.New
 {
     public class CreatedNewsDto : News
     {
-        public string ViewAdvise { get; set; }
-        public string ViewVaccine { get; set; }
+        public string? ViewAdvise { get; set; }
+        public string? ViewVaccine { get; set; }
 
-        public List<string> Columns { get; set; }
+        public List<string>? Columns { get; set; }
     }
 }

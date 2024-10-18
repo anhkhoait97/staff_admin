@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\VnvcStaffAdmin.Domain\VnvcStaffAdmin.Domain.csproj" />
     <ProjectReference Include="..\VnvcStaffAdmin.Infrastructure\VnvcStaffAdmin.Infrastructure.csproj" />
   </ItemGroup>
 

@@ -15,8 +15,8 @@ namespace VnvcStaffAdmin.Infrastructure.Context
         {
             if (_mongoClient != null) return;
 
-            var connectionString = Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING");
-            var databaseName = Environment.GetEnvironmentVariable("USER_MONGODB_DATABASE_NAME");
+            var connectionString = Environment.GetEnvironmentVariable("MONGO_ADMINSTAFF_CONNECTION_STRING");
+            var databaseName = Environment.GetEnvironmentVariable("IDENTITY_MONGODB_DATABASE_NAME");
 
             _mongoClient = new MongoClient(connectionString);
             _database = _mongoClient.GetDatabase(databaseName);

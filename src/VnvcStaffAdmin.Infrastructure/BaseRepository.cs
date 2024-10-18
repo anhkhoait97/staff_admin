@@ -1,6 +1,9 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.AspNetCore.Http;
+using MongoDB.Driver;
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Claims;
 using VnvcStaffAdmin.Domain.Attributes;
 using VnvcStaffAdmin.Domain.Interface;
 using VnvcStaffAdmin.Infrastructure.Interface;
@@ -12,8 +15,11 @@ namespace VnvcStaffAdmin.Infrastructure
     {
         protected IMongoCollection<TEntity> _collection;
         protected readonly IMongoContext _context;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public BaseRepository(IMongoContext context)
+        public BaseRepository(
+            IMongoContext context,
+            IHttpContextAccessor contextAccessor)
         {
             _context = context;
 
@@ -22,18 +28,61 @@ namespace VnvcStaffAdmin.Infrastructure
                 ?? typeof(TEntity).Name;
 
             _collection = _context.GetCollection<TEntity>(collectionName);
+
+            _contextAccessor = contextAccessor;
+
         }
+
+        public string? UserId => _contextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        public string? UserName => _contextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value;
 
         public virtual async Task<TEntity> GetByIdAsync(string id)
         {
-            var filter = Builders<TEntity>.Filter.Eq("Id", id)
-                & Builders<TEntity>.Filter.Eq("IsDelete", false);
+            var filter = Builders<TEntity>.Filter.Eq("_id", id);
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(TEntity)))
+            {
+                var softDeleteFilter = Builders<TEntity>.Filter.Or(
+                    Builders<TEntity>.Filter.Eq("IsDelete", false),
+                    Builders<TEntity>.Filter.Exists("IsDelete", false) 
+                );
+
+                filter = Builders<TEntity>.Filter.And(filter, softDeleteFilter);
+            }
+
+            return await _collection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public virtual async Task<TEntity> GetByIdAsync(Guid id)
+        {
+            var filter = Builders<TEntity>.Filter.Eq("_id", id);
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(TEntity)))
+            {
+                var softDeleteFilter = Builders<TEntity>.Filter.Or(
+                    Builders<TEntity>.Filter.Eq("IsDelete", false),
+                    Builders<TEntity>.Filter.Exists("IsDelete", false)
+                );
+
+                filter = Builders<TEntity>.Filter.And(filter, softDeleteFilter);
+            }
+
             return await _collection.Find(filter).FirstOrDefaultAsync();
         }
 
         public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            var filter = Builders<TEntity>.Filter.Eq("IsDelete", false);
+            var filter = Builders<TEntity>.Filter.Empty;
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(TEntity)))
+            {
+                var softDeleteFilter = Builders<TEntity>.Filter.Or(
+                    Builders<TEntity>.Filter.Eq("IsDelete", false),
+                    Builders<TEntity>.Filter.Exists("IsDelete", false)
+                );
+                filter = Builders<TEntity>.Filter.And(filter, softDeleteFilter);
+            }
+
             return await _collection.Find(filter).ToListAsync();
         }
 
@@ -42,7 +91,7 @@ namespace VnvcStaffAdmin.Infrastructure
             if (entity is IAuditable auditableEntity)
             {
                 auditableEntity.CreatedAt = DateTime.UtcNow;
-                auditableEntity.CreatedBy = "admin";
+                auditableEntity.CreatedBy = UserName ?? "Anonymous";
             }
 
             if (entity is ISoftDeletable softDeletableEntity)
@@ -55,7 +104,7 @@ namespace VnvcStaffAdmin.Infrastructure
 
         public virtual async Task AddManyAsync(IEnumerable<TEntity> entities)
         {
-            var userName = "admin";
+            var userName = UserName ?? "Anonymous";
             foreach (var entity in entities)
             {
                 if (entity is IAuditable auditableEntity)
@@ -93,7 +142,7 @@ namespace VnvcStaffAdmin.Infrastructure
                 update = Builders<TEntity>.Update.Combine(
                     update,
                     Builders<TEntity>.Update.Set("UpdatedAt", DateTime.UtcNow),
-                    Builders<TEntity>.Update.Set("UpdatedBy", "admin")
+                    Builders<TEntity>.Update.Set("UpdatedBy", UserName ?? "Anonymous")
                 );
             }
 
@@ -107,7 +156,7 @@ namespace VnvcStaffAdmin.Infrastructure
             if (entity is IAuditable auditableEntity)
             {
                 auditableEntity.UpdatedAt = DateTime.UtcNow;
-                auditableEntity.UpdatedBy = "admin";
+                auditableEntity.UpdatedBy = UserName ?? "Anonymous";
             }
 
             await _collection.ReplaceOneAsync(filter, entity);
@@ -127,7 +176,7 @@ namespace VnvcStaffAdmin.Infrastructure
 
             var update = Builders<TEntity>.Update.Set("IsDelete", true)
                                                  .Set("UpdatedAt", DateTime.UtcNow)
-                                                 .Set("UpdatedBy", "admin");
+                                                 .Set("UpdatedBy", UserName ?? "Anonymous");
 
             await _collection.UpdateOneAsync(filter, update);
         }
@@ -139,12 +188,34 @@ namespace VnvcStaffAdmin.Infrastructure
 
         public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _collection.Find(predicate).ToListAsync();
+            var filter = Builders<TEntity>.Filter.Where(predicate);
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(TEntity)))
+            {
+                var softDeleteFilter = Builders<TEntity>.Filter.Or(
+                    Builders<TEntity>.Filter.Eq("IsDelete", false),
+                    Builders<TEntity>.Filter.Exists("IsDelete", false)
+                );
+                filter = Builders<TEntity>.Filter.And(filter, softDeleteFilter);
+            }
+
+            return await _collection.Find(filter).ToListAsync();
         }
 
         public virtual async Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _collection.Find(predicate).FirstOrDefaultAsync();
+            var filter = Builders<TEntity>.Filter.Where(predicate);
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(TEntity)))
+            {
+                var softDeleteFilter = Builders<TEntity>.Filter.Or(
+                    Builders<TEntity>.Filter.Eq("IsDelete", false),
+                    Builders<TEntity>.Filter.Exists("IsDelete", false)
+                );
+                filter = Builders<TEntity>.Filter.And(filter, softDeleteFilter);
+            }
+
+            return await _collection.Find(filter).FirstOrDefaultAsync();
         }
 
         public virtual void Dispose()
@@ -154,12 +225,36 @@ namespace VnvcStaffAdmin.Infrastructure
 
         public virtual async Task<IEnumerable<TEntity>> FindPagingAsync(Expression<Func<TEntity, bool>> predicate, int skip, int limit, SortDefinition<TEntity>? sort = null)
         {
-            return await _collection.Find(predicate).Sort(sort).Skip(skip).Limit(limit).ToListAsync();
+            var filter = Builders<TEntity>.Filter.Where(predicate);
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(TEntity)))
+            {
+                var softDeleteFilter = Builders<TEntity>.Filter.Or(
+                    Builders<TEntity>.Filter.Eq("IsDelete", false),
+                    Builders<TEntity>.Filter.Exists("IsDelete", false)
+                );
+                filter = Builders<TEntity>.Filter.And(filter, softDeleteFilter);
+            }
+
+            return await _collection.Find(filter).Sort(sort).Skip(skip).Limit(limit).ToListAsync();
         }
 
         public virtual async Task<long> CountAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _collection.Find(predicate).CountDocumentsAsync();
+            var filter = Builders<TEntity>.Filter.Where(predicate);
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(TEntity)))
+            {
+                var softDeleteFilter = Builders<TEntity>.Filter.Or(
+                    Builders<TEntity>.Filter.Eq("IsDelete", false),
+                    Builders<TEntity>.Filter.Exists("IsDelete", false)
+                );
+                filter = Builders<TEntity>.Filter.And(filter, softDeleteFilter);
+            }
+
+            return await _collection.Find(filter).CountDocumentsAsync();
         }
+
+
     }
 }

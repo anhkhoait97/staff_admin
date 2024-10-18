@@ -145,8 +145,8 @@ namespace VnvcStaffAdmin.Application.ExtendServices.Minio
             {
                 var presignedGetObjectArgs = new PresignedGetObjectArgs()
                     .WithBucket(_bucketName)
-                    .WithObject(fileName)
-                    .WithExpiry(60 * 60); // 1 hour expiration
+                    .WithObject(fileName);
+                    //.WithExpiry(60 * 60); 
 
                 var url = await _minioClient.PresignedGetObjectAsync(presignedGetObjectArgs);
                 _logger.LogInformation("Pre-signed URL for file '{FileName}' generated successfully.", fileName);

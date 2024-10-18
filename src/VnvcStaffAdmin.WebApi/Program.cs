@@ -1,8 +1,12 @@
 using Microsoft.OpenApi.Models;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson.Serialization;
+using VnvcStaffAdmin.Infrastructure.ConfigurationServices;
 using VnvcStaffAdmin.Application.ConfigurationServices;
 using VnvcStaffAdmin.Identity.ConfigurationServices;
+using VnvcStaffAdmin.Application.ExtendServices.ElasticSearch.ConfigurationServices;
+using VnvcStaffAdmin.Application.ExtendServices.Redis.ConfigurationServices;
+using VnvcStaffAdmin.Application.ExtendServices.Minio.ConfigurationServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,11 +23,14 @@ BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.Bson
 builder.Services.AddInfrastructure();
 builder.Services.AddRepositories();
 builder.Services.AddAppServices();
+builder.Services.AddIdentityAppService();
 
 builder.Services.AddCustomAuthorize();
 builder.Services.AddJWTAuthen(builder.Configuration);
 
-builder.Services.AddMinioService(builder.Configuration);
+builder.Services.AddMinioService();
+builder.Services.AddElasticsearch();
+builder.Services.AddRedis();
 
 builder.Services.AddControllers();
 
